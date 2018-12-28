@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 void main() => runApp(MyApp());
 
@@ -48,10 +49,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   String _filePath;
   Digest _fileDigest;
-  List<Digest> _auths = [];
+  final List<Digest> _auths = [];
 
 
 
@@ -61,14 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getFile() async {
-    // selects a file to authenticate.
+    // selects a file to authenticate, and calculates the sha256 hash.
     try {
       String filePath = await FilePicker.getFilePath(type: FileType.ANY);
       if (filePath == '') {
         return;
       }
 
-      print("File path: " + filePath);
+//      print("File path: " + filePath);
 
       setState((){this._filePath = filePath;});
       final file = await _localFile;
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } on Exception catch (e) {
       print("Error while picking the file: " + e.toString());
     }
-    print(this._auths);
+//    print(this._auths);
   }
 
   Widget _authList(){
@@ -97,9 +97,28 @@ class _MyHomePageState extends State<MyHomePage> {
             label: Text(item.substring(0,40) + '...'),
             onPressed: (){
               print("selected $item");
+              _loadWeb();
             },
           );
         }
+    );
+  }
+
+  void _loadWeb(){
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(
+          builder: (BuildContext context){
+            return new WebviewScaffold(
+                url: "https://www.authenticha.in",
+                appBar: new AppBar(
+                title: new Text("Authentichain website"),
+              ),
+                withZoom: false,
+                withLocalStorage: true,
+
+            );
+          }
+      ),
     );
   }
 
@@ -118,6 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: <Widget>[
+          new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
+        ],
       ),
         body: _authList(),
 

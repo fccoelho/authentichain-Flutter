@@ -19,6 +19,7 @@ dependencies:
   crypto: ^2.0.6
   open_file: ^1.1.1
   file_picker: ^1.0.2
+  flutter_webview_plugin: ^0.3.0+2
 
 
   # The following adds the Cupertino Icons font to your application.
