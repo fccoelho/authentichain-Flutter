@@ -20,6 +20,8 @@ dependencies:
   open_file: ^1.1.1
   file_picker: ^1.0.2
   flutter_webview_plugin: ^0.3.0+2
+  url_launcher: ^4.0.3
+  dio: ^1.0.13
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +54,10 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.io/assets-and-images/#from-packages
+
+  assets:
+    - images/
+
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

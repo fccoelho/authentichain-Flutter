@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
         //
         // Try running your application with "flutter run". You'll see the
         // application has a blue toolbar. Then, without quitting the app, try
-         // changing the primarySwatch below to Colors.green and then invoke
+        // changing the primarySwatch below to Colors.green and then invoke
         // "hot reload" (press "r" in the console where you ran "flutter run",
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
@@ -52,8 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _filePath;
   Digest _fileDigest;
   final List<Digest> _auths = [];
-
-
+  final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
   Future<File> get _localFile async {
     // Asynchronous file getter
@@ -70,58 +71,55 @@ class _MyHomePageState extends State<MyHomePage> {
 
 //      print("File path: " + filePath);
 
-      setState((){this._filePath = filePath;});
+      setState(() {
+        this._filePath = filePath;
+      });
       final file = await _localFile;
       this._fileDigest = sha256.convert(file.readAsBytesSync());
       setState(() {
         this._auths.add(this._fileDigest);
       });
-
     } on Exception catch (e) {
       print("Error while picking the file: " + e.toString());
     }
 //    print(this._auths);
   }
 
-  Widget _authList(){
+  Widget _authList() {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemCount: this._auths.length,
-        itemBuilder: (BuildContext context, int index){
+        itemBuilder: (BuildContext context, int index) {
           var item = this._auths[index].toString();
           return InputChip(
             avatar: CircleAvatar(
               backgroundColor: Colors.grey.shade800,
               child: Icon(Icons.enhanced_encryption),
             ),
-            label: Text(item.substring(0,40) + '...'),
-            onPressed: (){
+            label: Text(item.substring(0, 40) + '...'),
+            onPressed: () {
               print("selected $item");
               _loadWeb();
             },
           );
-        }
-    );
+        });
   }
 
-  void _loadWeb(){
+  void _loadWeb() {
     Navigator.of(context).push(
-      new MaterialPageRoute<void>(
-          builder: (BuildContext context){
-            return new WebviewScaffold(
-                url: "https://www.authenticha.in",
-                appBar: new AppBar(
-                title: new Text("Authentichain website"),
-              ),
-                withZoom: false,
-                withLocalStorage: true,
-
-            );
-          }
-      ),
+      new MaterialPageRoute<void>(builder: (BuildContext context) {
+        return new WebviewScaffold(
+          url: "https://www.authenticha.in",
+          appBar: new AppBar(
+            title: new Text("Authentichain website"),
+          ),
+          withZoom: false,
+          withLocalStorage: true,
+          appCacheEnabled: true,
+        );
+      }),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +139,23 @@ class _MyHomePageState extends State<MyHomePage> {
           new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
         ],
       ),
-        body: _authList(),
+      body: new Stack(
+        children: <Widget>[
+          Container(
+            child: new DecoratedBox(
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  image: new AssetImage("images/logo_authentichain.png"),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: _authList(),
+          )
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: getFile,
