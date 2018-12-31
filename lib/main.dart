@@ -11,6 +11,8 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  final flutterWebViewPlugin = new FlutterWebviewPlugin();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _filePath;
   Digest _fileDigest;
   final List<Digest> _auths = [];
-  final flutterWebviewPlugin = new FlutterWebviewPlugin();
+  final flutterWebViewPlugin = new FlutterWebviewPlugin();
 
   Future<File> get _localFile async {
     // Asynchronous file getter
@@ -100,6 +102,9 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               print("selected $item");
               _loadWeb();
+              flutterWebViewPlugin.evalJavascript(
+                  'document.forms["docform"]["name"].value="teste"; document.forms["docform"]["content_hash"].value="$item";'
+              );
             },
           );
         });
@@ -130,42 +135,44 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return MaterialApp(
-        home: Container(
-            decoration: new BoxDecoration(
-              color: Colors.white70,
-              image: new DecorationImage(
-                image: new AssetImage("images/logo_authentichain.png"),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              backgroundColor: Colors.white30,
-              title: Text(widget.title),
-              actions: <Widget>[
-                new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
-              ],
-            ),
-            body: new Stack(
-              children: <Widget>[
-                Text("Touch Hash to authenticate:", textScaleFactor: 1.5,),
-                Divider(color: Colors.white,height: 50,),
-                Center(
-                  child: _authList(),
-                )
-              ],
-            ),
-
-            floatingActionButton: FloatingActionButton(
-              onPressed: getFile,
-              tooltip: 'Select file',
-              child: Icon(Icons.sd_storage),
-            ), // This trailing comma makes auto-formatting nicer for build methods.
-          ),
+      home: Container(
+        decoration: new BoxDecoration(
+          color: Colors.white70,
+          image: new DecorationImage(
+              image: new AssetImage("images/logo_authentichain.png"),
+              fit: BoxFit.fitWidth),
         ),
-        );
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            backgroundColor: Colors.white30,
+            title: Text(widget.title),
+            actions: <Widget>[
+              new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
+            ],
+          ),
+          body: new Stack(
+            children: <Widget>[
+              Text("Touch Hash to authenticate:", textScaleFactor: 1.5),
+              Divider(
+                color: Colors.white,
+                height: 50,
+              ),
+              Center(
+                child: _authList(),
+              )
+            ],
+          ),
+
+          floatingActionButton: FloatingActionButton(
+            onPressed: getFile,
+            tooltip: 'Select file',
+            child: Icon(Icons.sd_storage),
+          ), // This trailing comma makes auto-formatting nicer for build methods.
+        ),
+      ),
+    );
   }
 }
