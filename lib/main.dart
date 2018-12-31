@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _authList() {
     return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         itemCount: this._auths.length,
         itemBuilder: (BuildContext context, int index) {
           var item = this._auths[index].toString();
@@ -130,38 +130,42 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        actions: <Widget>[
-          new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
-        ],
-      ),
-      body: new Stack(
-        children: <Widget>[
-          Container(
-            child: new DecoratedBox(
-              decoration: new BoxDecoration(
-                image: new DecorationImage(
-                  image: new AssetImage("images/logo_authentichain.png"),
-                  fit: BoxFit.fill,
-                ),
+        home: Container(
+            decoration: new BoxDecoration(
+              color: Colors.white70,
+              image: new DecorationImage(
+                image: new AssetImage("images/logo_authentichain.png"),
+                fit: BoxFit.fitWidth,
               ),
             ),
-          ),
-          Center(
-            child: _authList(),
-          )
-        ],
-      ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              backgroundColor: Colors.white30,
+              title: Text(widget.title),
+              actions: <Widget>[
+                new IconButton(icon: const Icon(Icons.list), onPressed: _loadWeb)
+              ],
+            ),
+            body: new Stack(
+              children: <Widget>[
+                Text("Touch Hash to authenticate:", textScaleFactor: 1.5,),
+                Divider(color: Colors.white,height: 50,),
+                Center(
+                  child: _authList(),
+                )
+              ],
+            ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: getFile,
-        tooltip: 'Select file',
-        child: Icon(Icons.sd_storage),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    ));
+            floatingActionButton: FloatingActionButton(
+              onPressed: getFile,
+              tooltip: 'Select file',
+              child: Icon(Icons.sd_storage),
+            ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
+        ),
+        );
   }
 }
